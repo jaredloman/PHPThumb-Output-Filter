@@ -2,11 +2,13 @@
 	// PHPThumb Output Filter - The Dumb way (I'm sure)
 	//
 	// By Jared Loman a.k.a jtech - http://www.jaredloman.com
-	// Version 0.2 beta
+	// Version 0.2.1 beta
+	//
+	// http://www.github.com/jaredloman/PHPThumb-Output-Filter
 	//
 	// Current Version Notes: 
 	// Added array to handle "class" & "alt" options with defaults.
-	// Added a space removal fool-proof in case someone trys to skip the class and add an alt. 
+	// Added a space removal fool-proof in case someone trys to skip the class and add an alt. (REMOVED) 
 	// Added Readme
 	// Still haven't tested all phpthumb modifiers.
 	//
@@ -46,7 +48,7 @@
 	$error = "You need to specify at least one option, otherwise this filter is pointless!";
 	
 	if(!empty($options)){$phpthmbOptions = explode(",", $options);}else{$output = $error; return $output;}
-	if(!isset($phpthmbOptions[1])){$phpthmbOptions[1] = "phpthumb";}else{$phpthmbOptions[1] = str_replace(" ", "", $phpthmbOptions[1]);}
+	if(!isset($phpthmbOptions[1])){$phpthmbOptions[1] = "phpthumb";}
 	if(!isset($phpthmbOptions[2])){$phpthmbOptions[2] = "phpthumb";}
 
 	$start = "<img src='assets/components/phpthumb/phpThumb.php?src=";

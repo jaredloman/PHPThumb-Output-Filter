@@ -1,13 +1,13 @@
 // PHPThumb Output Filter - The Dumb way (I'm sure)
 //
 // By Jared Loman a.k.a jtech - http://www.jaredloman.com
-// Version 0.2 beta
+// Version 0.2.1 beta
 //
-// View project at http://github.com/jaredloman/PHPThumb-Output-Filter
+// http://www.github.com/jaredloman/PHPThumb-Output-Filter
 //
 // Current Version Notes: 
 // Added array to handle "class" & "alt" options with defaults.
-// Added a space removal fool-proof in case someone trys to skip the class and add an alt. 
+// Added a space removal fool-proof in case someone trys to skip the class and add an alt. (REMOVED) 
 // Added Readme
 // Still haven't tested all phpthumb modifiers.
 //
