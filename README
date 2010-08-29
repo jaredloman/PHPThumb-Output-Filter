@@ -1,17 +1,29 @@
-// PHPThumb Output Filter - The Dumb way (I'm sure)
+// PHPThumb Output Filter 
 //
 // By Jared Loman a.k.a jtech - http://www.jaredloman.com
-// Version 0.2.1 beta
 //
-// http://www.github.com/jaredloman/PHPThumb-Output-Filter
+// GitHub: http://github.com/jaredloman/PHPthumb-Output-Filter/
 //
-// Current Version Notes: 
-// Added array to handle "class" & "alt" options with defaults.
-// Added a space removal fool-proof in case someone trys to skip the class and add an alt. (REMOVED) 
-// Added Readme
-// Still haven't tested all phpthumb modifiers.
+// Revision by Djordje Dimitrijev (dj13 on Modx forum)
+//
+// Revision Notes:
+//
+// Added possibility to use high security password from phpThumb config.
+// Possibility to add as many default image attributes as you'd like through the array.     
+// New way to add attributes in filter:
+// attribute_html_name || attribute_value
+//
+// Example: [[*mytvImage:phpthumb=`&w=100&h=50&zc=1,class||myClass,title||myTitle,style||border: 1px solid #333`]]
+//
+// Version 0.3 beta
 //
 // Previous Version Notes:
+//
+// v.0.2: Added array to handle "class" & "alt" options with defaults.
+// v.0.2: Added a space removal fool-proof in case someone trys to skip the class and add an alt.
+// v.0.2: Added Readme
+// v.0.2: Still haven't tested all phpthumb modifiers.
+//
 // v.0.1: I haven't tested all of the phpthumb modifiers, but I think they should work
 
 // ReadMe:
@@ -21,24 +33,20 @@
 // couldn't offer me. This output filter is essentially useless for anything other than images (Obviously!), but  I
 // figured I'd at least mention this.
 //
-// This does not support PHPThumbs ability to create new images from nothing. It would be kind of silly to use a 
+// This does not support PHPThumbs ability to create new images from nothing. It would be kind of silly to use a
 // TV and Output filter for this purpose anyhow.
 //
 // INSTRUCTIONS:
 // Step 1.) Create a TV with an input type of "IMAGE" and an output type of "TEXT".
 // Step 2.) Add an image to the TV.
 // Step 3.) Add your TV to your page content or template and modify in the format of the example.
-// 
-// OPTIONS: 
+//
+// OPTIONS:
 // Option 1.) The first option is the phpthumb modifications. You can add any modifier that phpthumb supports. (AFIK)
-// Option 2.) Image Class (optional) - Supply a class for your image. Defaults to "phpthumb" if you don't put anything in.
-// Option 3.) Image Alt (optional) - Supply text for the alt tag. Defaults to "phpthumb" if you don't put anything in.
+// Option 2.) Add any HTML option (thanks to dj13) separated by double poles "||". (See example) 
 //
 // IMPORTANT:
-// Options MUST be put in specified order! 
-// You Must specify a class if you would like a custom ALT. (e.g. [[*myTV:phpthumb=`&w=100,My Alt Text`]] ) will
-// return <img src=".." class="MyAltText" alt="phpthumb" />.. Sorry, it's just the nature of the beast.
 //
 // TV Output Type MUST be "TEXT"!!
 //
-// Example: [[*mytvImage:phpthumb=`&w=100&h=50&zc=1,imgClass,imgAlt`]]
+// Example: [[*mytvImage:phpthumb=`&w=100&h=50&zc=1,class||myClass,title||myTitle,style||border: 1px solid #333`]]
