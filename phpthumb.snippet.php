@@ -1,24 +1,32 @@
 <?php
-  // PHPThumb Output Filter 
+// PHPThumb Output Filter
   //
   // By Jared Loman a.k.a jtech - http://www.jaredloman.com
   //
-  // GitHub: http://github.com/jaredloman/PHPthumb-Output-Filter/
+  // GitHub: http://github.com/jaredloman/PHPthumb-Output-Filter
   //
   // Revision by Djordje Dimitrijev (dj13 on Modx forum)
   //
   // Revision Notes:
   //
-  // Added possibility to use high security password from phpThumb config.
-  // Possibility to add as many default image attributes as you'd like through the array.     
+  // Choose the output from a script:
+  // 1. Full image tag.
+  // 2. Only src value (additional attributes will not be used).
+  // Added possibility use or not high security password from phpThumb config.
+  // Possibility to add as much as you want default image attributes through the array.     
   // New way to add attributes in filter:
   // attribute_html_name || attribute_value
   //
-  // Example: [[*mytvImage:phpthumb=`&w=100&h=50&zc=1,class||myClass,title||myTitle,style||border: 1px solid #333`]]
+  // Version 0.4 beta
   //
-  // Version 0.3 beta
+  // Current Version Notes:
+  // Now with Source Only option!
   //
   // Previous Version Notes:
+  // v.0.3: Added possibility use or not high security password from phpThumb config.
+  // v.0.3: Possibility to add as much as you want default image attributes through the array.     
+  // v.0.3: New way to add attributes in filter:
+  // v.0.3: attribute_html_name || attribute_value
   //
   // v.0.2: Added array to handle "class" & "alt" options with defaults.
   // v.0.2: Added a space removal fool-proof in case someone trys to skip the class and add an alt.
@@ -44,13 +52,19 @@
   //
   // OPTIONS:
   // Option 1.) The first option is the phpthumb modifications. You can add any modifier that phpthumb supports. (AFIK)
-  // Option 2.) Add any HTML option (thanks to dj13) separated by double poles "||". (See example) 
   //
   // IMPORTANT:
-  //
   // TV Output Type MUST be "TEXT"!!
   //
-  // Example: [[*mytvImage:phpthumb=`&w=100&h=50&zc=1,class||myClass,title||myTitle,style||border: 1px solid #333`]]
+  // Examples:
+  //
+  // Filter full image tag: [[*mytvImage:phpthumb=`&w=100&h=50&zc=1,class||myClass,title||myTitle,style||border: 1px solid #333`]]
+  // Filter only src output: [[*mytvImage:phpthumb=`&w=100&h=50&zc=1,onlysrc||1`]]
+  //
+  // Snippet full image tag: [[phpthumb? &input=`files/myImage.jpg` &options=`&w=100&h=50&zc=1,class||myClass,title||myTitle`]]
+  // Snippet only src output v1 (best way if You want only src): [[phpthumb? &input=`files/myImage.jpg` &options=`&w=100&h=50&zc=1` &onlysrc=`1`]]
+  // Snippet only src output v2: [[phpthumb? &input=`files/myImage.jpg` &options=`&w=100&h=50&zc=1,onlysrc||1`]]
+  //
  
   $phpthumb_path = 'assets/components/phpthumb';
   
@@ -63,56 +77,80 @@
   // Examples:
   // $attributes['style'] = 'border:1px solid #ccc;'
   // $attributes['title'] = 'My Title';
-  // $attributes['class'] = 'myClass'; 
+  // $attributes['class'] = 'myClass';
+  //
+  // IMPORTANT! If You set:
+  // $output_onlysrc = 1;
+  // all returns from snippet will be only src
+  
+  $output_onlysrc = false;
   
   $error = "You need to specify at least one option, otherwise this filter is pointless!";
   if(!empty($options)){$phpthmbOptions = explode(",", $options);}else{$output = $error; return $output;}
   
   // Include phpThumb config file.
-  require_once($modx->getOption('base_path') . $phpthumb_path . '/phpThumb.config.php');
-
+   require_once($modx->getOption('base_path') . $phpthumb_path . '/phpThumb.config.php');
+  
   if(isset($PHPTHUMB_CONFIG['high_security_password'])) $_SESSION['high_security_password'] = $PHPTHUMB_CONFIG['high_security_password'];
   if(isset($PHPTHUMB_CONFIG['high_security_enabled'])) $_SESSION['high_security_enabled'] = $PHPTHUMB_CONFIG['high_security_enabled'];
   
   $att_out = '';
   $src = '';
   
-  foreach($phpthmbOptions as $k => $v){
-    
-    // Skip phpThumb modifications
-    if($k==0) continue;
-    
-    // Explode rest of options
-    $m = explode($attribute_sep, $v);  
-    
-    $m_att = strtolower(trim($m[0]));
-
-    // Join attributes except src 
-    $att_out .= ' '.$m_att.'="'.trim($m[1]).'"';
-    
-    // Remove default attribute if exist in phpThumb options
-    if(isset($attributes[$m_att])) unset($attributes[$m_att]);
+  // From snippet call
+  if($onlysrc == 1) {
+    $output_onlysrc = 1;
   }
   
-  // Add rest of unused default attributes 
-  if(isset($attributes)) {
-      foreach($attributes as $k => $v){
-          $att_out .= ' '.$k.'="'.$v.'"'; 
-      } 
+  // If onlysrc is set in snippet call or as default skip secound explode and adding rest of attributes
+  if($output_onlysrc !=1 ) {
+    
+    foreach($phpthmbOptions as $k => $v){
+      
+      // Skip phpThumb modifications
+      if($k==0) continue;
+      
+      // Explode rest of options
+      $m = explode($attribute_sep, $v);  
+      
+      $m_att = strtolower(trim($m[0]));
+      
+      // Search for onlysrc in options
+      if($m_att=='onlysrc' && trim($m[1])==1) {
+        $output_onlysrc = 1;
+        break;
+      }
+  
+      // Join attributes except src
+      $att_out .= ' '.$m_att.'="'.trim($m[1]).'"';
+      
+      // Remove default attribute if exist in phpThumb options
+      if(isset($attributes[$m_att])) unset($attributes[$m_att]);
+    }
+    
+    // Add rest of unused default attributes
+    if(isset($attributes)) {
+        foreach($attributes as $k => $v){
+            $att_out .= ' '.$k.'="'.$v.'"';
+        }
+    }
   }
   
   // Image url + phpthumb modifications
   $src = 'src=' . $base . $input . $phpthmbOptions[0];
-  
+
   // If high security is enabled define hash
   if($_SESSION['high_security_enabled']){
     $output = $base . $phpthumb_path . '/phpThumb.php?' . $src . '&hash=' . md5($src.$_SESSION['high_security_password']);
   } else {
-    $output = $base . $phpthumb_path . '/phpThumb.php?' . $src;
+    $output = $base . $phpthumb_path . '/phpThumb.php?' . $src ;
   }
- 
-  // Final join
-  $output = '<img src="' . $output .'"'. $att_out.'>'; 
-  return $output;  
- 
+  
+  // Final join and output only src or full image tag
+  if($output_onlysrc ==1) {
+    return $output;
+  } else {
+    $output = '<img src="' . $output .'"'. $att_out.'>';
+    return $output;
+  }
 ?>
