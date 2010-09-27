@@ -1,52 +1,68 @@
-// PHPThumb Output Filter 
-//
-// By Jared Loman a.k.a jtech - http://www.jaredloman.com
-//
-// GitHub: http://github.com/jaredloman/PHPthumb-Output-Filter/
-//
-// Revision by Djordje Dimitrijev (dj13 on Modx forum)
-//
-// Revision Notes:
-//
-// Added possibility to use high security password from phpThumb config.
-// Possibility to add as many default image attributes as you'd like through the array.     
-// New way to add attributes in filter:
-// attribute_html_name || attribute_value
-//
-// Example: [[*mytvImage:phpthumb=`&w=100&h=50&zc=1,class||myClass,title||myTitle,style||border: 1px solid #333`]]
-//
-// Version 0.3 beta
-//
-// Previous Version Notes:
-//
-// v.0.2: Added array to handle "class" & "alt" options with defaults.
-// v.0.2: Added a space removal fool-proof in case someone trys to skip the class and add an alt.
-// v.0.2: Added Readme
-// v.0.2: Still haven't tested all phpthumb modifiers.
-//
-// v.0.1: I haven't tested all of the phpthumb modifiers, but I think they should work
-
-// ReadMe:
-//
-// Notes:
-// I created the PHPThumb output filter so that I could have some flexibility with my images that an output modifier
-// couldn't offer me. This output filter is essentially useless for anything other than images (Obviously!), but  I
-// figured I'd at least mention this.
-//
-// This does not support PHPThumbs ability to create new images from nothing. It would be kind of silly to use a
-// TV and Output filter for this purpose anyhow.
-//
-// INSTRUCTIONS:
-// Step 1.) Create a TV with an input type of "IMAGE" and an output type of "TEXT".
-// Step 2.) Add an image to the TV.
-// Step 3.) Add your TV to your page content or template and modify in the format of the example.
-//
-// OPTIONS:
-// Option 1.) The first option is the phpthumb modifications. You can add any modifier that phpthumb supports. (AFIK)
-// Option 2.) Add any HTML option (thanks to dj13) separated by double poles "||". (See example) 
-//
-// IMPORTANT:
-//
-// TV Output Type MUST be "TEXT"!!
-//
-// Example: [[*mytvImage:phpthumb=`&w=100&h=50&zc=1,class||myClass,title||myTitle,style||border: 1px solid #333`]]
+// PHPThumb Output Filter
+  //
+  // By Jared Loman a.k.a jtech - http://www.jaredloman.com
+  //
+  // GitHub: http://github.com/jaredloman/PHPthumb-Output-Filter
+  //
+  // Revision by Djordje Dimitrijev (dj13 on Modx forum)
+  //
+  // Revision Notes:
+  //
+  // Choose the output from a script:
+  // 1. Full image tag.
+  // 2. Only src value (additional attributes will not be used).
+  // Added possibility use or not high security password from phpThumb config.
+  // Possibility to add as much as you want default image attributes through the array.     
+  // New way to add attributes in filter:
+  // attribute_html_name || attribute_value
+  //
+  // Version 0.5 beta
+  //
+  // Current Version Notes:
+  // Now utilizes the default phpthumb included with Revo!
+  // I'm not sure if the high security options continue to be functional.
+  //
+  // Previous Version Notes:
+  // v.0.4: Added Source only option (by DJ13)
+  // v.0.3: Added possibility use or not high security password from phpThumb config.
+  // v.0.3: Possibility to add as much as you want default image attributes through the array.     
+  // v.0.3: New way to add attributes in filter:
+  // v.0.3: attribute_html_name || attribute_value
+  //
+  // v.0.2: Added array to handle "class" & "alt" options with defaults.
+  // v.0.2: Added a space removal fool-proof in case someone trys to skip the class and add an alt.
+  // v.0.2: Added Readme
+  // v.0.2: Still haven't tested all phpthumb modifiers.
+  //
+  // v.0.1: I haven't tested all of the phpthumb modifiers, but I think they should work
+  
+  // ReadMe:
+  //
+  // Notes:
+  // I created the PHPThumb output filter so that I could have some flexibility with my images that an output modifier
+  // couldn't offer me. This output filter is essentially useless for anything other than images (Obviously!), but  I
+  // figured I'd at least mention this.
+  //
+  // This does not support PHPThumbs ability to create new images from nothing. It would be kind of silly to use a
+  // TV and Output filter for this purpose anyhow.
+  //
+  // INSTRUCTIONS:
+  // Step 1.) Create a TV with an input type of "IMAGE" and an output type of "TEXT".
+  // Step 2.) Add an image to the TV.
+  // Step 3.) Add your TV to your page content or template and modify in the format of the example.
+  //
+  // OPTIONS:
+  // Option 1.) The first option is the phpthumb modifications. You can add any modifier that phpthumb supports. (AFIK)
+  //
+  // IMPORTANT:
+  // TV Output Type MUST be "TEXT"!!
+  //
+  // Examples:
+  //
+  // Filter full image tag: [[*mytvImage:phpthumb=`&w=100&h=50&zc=1,class||myClass,title||myTitle,style||border: 1px solid #333`]]
+  // Filter only src output: [[*mytvImage:phpthumb=`&w=100&h=50&zc=1,onlysrc||1`]]
+  //
+  // Snippet full image tag: [[phpthumb? &input=`files/myImage.jpg` &options=`&w=100&h=50&zc=1,class||myClass,title||myTitle`]]
+  // Snippet only src output v1 (best way if You want only src): [[phpthumb? &input=`files/myImage.jpg` &options=`&w=100&h=50&zc=1` &onlysrc=`1`]]
+  // Snippet only src output v2: [[phpthumb? &input=`files/myImage.jpg` &options=`&w=100&h=50&zc=1,onlysrc||1`]]
+  //
