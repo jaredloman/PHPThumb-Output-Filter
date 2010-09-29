@@ -1,5 +1,5 @@
 <?php
-// PHPThumb Output Filter
+  // PHPThumb Output Filter
   //
   // By Jared Loman a.k.a jtech - http://www.jaredloman.com
   //
@@ -17,13 +17,15 @@
   // New way to add attributes in filter:
   // attribute_html_name || attribute_value
   //
-  // Version 0.5 beta
+  // Version 0.6 beta
   //
   // Current Version Notes:
-  // Now utilizes the default phpthumb included with Revo!
-  // I'm not sure if the high security options continue to be functional.
+  // Fixed the removal of source only option (oops!)
+  // Added support to make image urls generated W3C compliant 
   //
   // Previous Version Notes:
+  // v.0.5: Now utilizes the default phpthumb included with Revo!
+  // v.0.5: I'm not sure if the high security options continue to be functional.
   // v.0.4: Added Source only option (by DJ13)
   // v.0.3: Added possibility use or not high security password from phpThumb config.
   // v.0.3: Possibility to add as much as you want default image attributes through the array.     
@@ -72,61 +74,88 @@
   
   // Define attribute name - value separator
   $attribute_sep = '||';
-  
+
   $base = $modx->config['base_url'];
-  
+
   // Default array of attributes with key name like html attribute name. Lowercase for keys.
   // Examples:
   // $attributes['style'] = 'border:1px solid #ccc;'
   // $attributes['title'] = 'My Title';
-  // $attributes['class'] = 'myClass'; 
-  
+  // $attributes['class'] = 'myClass';
+  //
+  // IMPORTANT! If You set:
+  // $output_onlysrc = 1;
+  // all returns from snippet will be only src
+
+  $output_onlysrc = false;
+
   $error = "You need to specify at least one option, otherwise this filter is pointless!";
   if(!empty($options)){$phpthmbOptions = explode(",", $options);}else{$output = $error; return $output;}
-  
+
   // Include phpThumb config file.
   // require_once($modx->getOption('base_path') . $phpthumb_path . '/phpThumb.config.php');
 
+  // Not sure if this is even required anymore?
   if(isset($PHPTHUMB_CONFIG['high_security_password'])) $_SESSION['high_security_password'] = $PHPTHUMB_CONFIG['high_security_password'];
   if(isset($PHPTHUMB_CONFIG['high_security_enabled'])) $_SESSION['high_security_enabled'] = $PHPTHUMB_CONFIG['high_security_enabled'];
-  
+
   $att_out = '';
   $src = '';
-  
-  foreach($phpthmbOptions as $k => $v){
-    
-    // Skip phpThumb modifications
-    if($k==0) continue;
-    
-    // Explode rest of options
-    $m = explode($attribute_sep, $v);  
-    
-    $m_att = strtolower(trim($m[0]));
 
-    // Join attributes except src 
-    $att_out .= ' '.$m_att.'="'.trim($m[1]).'"';
-    
-    // Remove default attribute if exist in phpThumb options
-    if(isset($attributes[$m_att])) unset($attributes[$m_att]);
+  // From snippet call
+  if($onlysrc == 1) {
+    $output_onlysrc = 1;
   }
-  
-  // Add rest of unused default attributes 
-  if(isset($attributes)) {
-      foreach($attributes as $k => $v){
-          $att_out .= ' '.$k.'="'.$v.'"'; 
-      } 
+
+  // If onlysrc is set in snippet call or as default skip secound explode and adding rest of attributes
+  if($output_onlysrc !=1 ) {
+
+    foreach($phpthmbOptions as $k => $v){
+
+      // Skip phpThumb modifications
+      if($k==0) continue;
+
+      // Explode rest of options
+      $m = explode($attribute_sep, $v);  
+
+      $m_att = strtolower(trim($m[0]));
+
+      // Search for onlysrc in options
+      if($m_att=='onlysrc' && trim($m[1])==1) {
+        $output_onlysrc = 1;
+        break;
+      }
+
+      // Join attributes except src
+      $att_out .= ' '.$m_att.'="'.trim($m[1]).'"';
+
+      // Remove default attribute if exist in phpThumb options
+      if(isset($attributes[$m_att])) unset($attributes[$m_att]);
+    }
+
+    // Add rest of unused default attributes
+    if(isset($attributes)) {
+        foreach($attributes as $k => $v){
+            $att_out .= ' '.$k.'="'.$v.'"';
+        }
+    }
   }
-  
+
   // Image url + phpthumb modifications
-  $src = 'src=' . $base . $input . $phpthmbOptions[0];
-  
+  $src = 'src=' . $base . $input . htmlspecialchars($phpthmbOptions[0]);
+
   // If high security is enabled define hash
   if($_SESSION['high_security_enabled']){
     $output = $base . $phpthumb_path . '/phpthumb.php?' . $src . '&hash=' . md5($src.$_SESSION['high_security_password']);
   } else {
-    $output = $base . $phpthumb_path . '/phpthumb.php?' . $src;
+    $output = $base . $phpthumb_path . '/phpthumb.php?' . $src ;
   }
- 
-  // Final join
-  $output = '<img src="' . $output .'"'. $att_out.'>'; 
-  return $output;
+
+  // Final join and output only src or full image tag
+  if($output_onlysrc ==1) {
+    return $output;
+  } else {
+    $output = '<img src="' . $output .'"'. $att_out.'>';
+    return $output;
+  }
+?>

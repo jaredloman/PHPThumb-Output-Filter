@@ -1,4 +1,4 @@
-// PHPThumb Output Filter
+  // PHPThumb Output Filter
   //
   // By Jared Loman a.k.a jtech - http://www.jaredloman.com
   //
@@ -16,13 +16,15 @@
   // New way to add attributes in filter:
   // attribute_html_name || attribute_value
   //
-  // Version 0.5 beta
+  // Version 0.6 beta
   //
   // Current Version Notes:
-  // Now utilizes the default phpthumb included with Revo!
-  // I'm not sure if the high security options continue to be functional.
+  // Fixed the removal of source only option (oops!)
+  // Added support to make image urls generated W3C compliant 
   //
   // Previous Version Notes:
+  // v.0.5: Now utilizes the default phpthumb included with Revo!
+  // v.0.5: I'm not sure if the high security options continue to be functional.
   // v.0.4: Added Source only option (by DJ13)
   // v.0.3: Added possibility use or not high security password from phpThumb config.
   // v.0.3: Possibility to add as much as you want default image attributes through the array.     
